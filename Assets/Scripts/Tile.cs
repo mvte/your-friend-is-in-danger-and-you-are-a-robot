@@ -2,8 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Foo : MonoBehaviour
+public class Tile : MonoBehaviour
 {
+    public bool open = true;
+    public bool occupied = false;
+    
     // Start is called before the first frame update
     void Start()
     {
