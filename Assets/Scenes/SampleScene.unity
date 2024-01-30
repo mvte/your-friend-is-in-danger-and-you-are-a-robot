@@ -152,8 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dfdbd5a732f2430d9a0437d7de420f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tile: {fileID: 3234924065092689149, guid: f82b2a9cdc52b4b42a9c347e0e3e9624, type: 3}
-  dim: 25
+  node: {fileID: -4091936263181716547, guid: d91190e1621bcc84d88d7b2980a4cb89, type: 3}
+  alien: {fileID: 1982570754502144150, guid: 623970ebb66aca84fa5818c04b7d7244, type: 3}
+  captain: {fileID: 5782170873754352323, guid: 12fb82511baab9444baf610982596325, type: 3}
+  dim: 16
+  k: 16
 --- !u!4 &209525699
 Transform:
   m_ObjectHideFlags: 0
@@ -163,7 +166,7 @@ Transform:
   m_GameObject: {fileID: 209525697}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.48076442, y: -0.20531589, z: 0.06310363}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -250,7 +253,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.18039216, g: 0.18039216, b: 0.18039216, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -275,7 +278,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 9
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -414,7 +417,7 @@ Transform:
   m_GameObject: {fileID: 1919825591}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.48076442, y: -0.20531589, z: 0.06310363}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -433,6 +436,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ship: {fileID: 209525698}
+  cam: {fileID: 519420028}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
