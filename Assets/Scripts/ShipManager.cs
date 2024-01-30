@@ -6,27 +6,17 @@ public class ShipManager : MonoBehaviour
 {
     public Node node;
     public Alien alien;
+    public Captain captainRef;
+    public Bot botRef;
+    public Bot bot;
     public Captain captain;
     public int dim;
     public int k;
 
+    public Dictionary<Vector2, Node> nodes;
+    public List<Alien> aliens;
 
-    private Dictionary<Vector2, Node> nodes;
-    private Dictionary<Vector2, Alien> aliens;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void Init(int dim = -1, int k = -1) {
+    public void Init(Bot botRef, int dim = -1, int k = -1, int sims = 1) {
         if (dim != -1) {
             this.dim = dim;
         }  
@@ -37,11 +27,24 @@ public class ShipManager : MonoBehaviour
             Debug.LogError("k must be less than or equal to dim * dim");
             return;
         }
+        if(botRef == null) {
+            Debug.LogError("Bot cannot be null");
+            return;
+        }
 
+        this.botRef = botRef;
         CreateGrid();
         GenerateShip();
+    }
+
+    public void Ready() {
         PlaceCaptain();
         BoardAliens();
+        PlaceBot();
+    }
+
+    public void Reset() {
+        Debug.Log("Resetting");
     }
 
     void CreateGrid() {
@@ -94,15 +97,15 @@ public class ShipManager : MonoBehaviour
     }
 
     /**
-     * Generates the structure of the ship by opening nodes as per the requirements
-     * 1. Choose a square at random to open
-     * 2. Iterate:
-     *  a. Identify all currently blocked cells that have exactly one open neighbor
-     *  b. Open one of these cells at random
-     *  c. Repeat until no more cells can be opened
-     * 3. Idenfity all cells that are 'dead ends' - open cells with one neighbor.
-     * 4. For approximately half these cells, pick one of their closed neighbors at random and open it.
-     */
+    * Generates the structure of the ship by opening nodes as per the requirements
+    * 1. Choose a square at random to open
+    * 2. Iterate:
+    *  a. Identify all currently blocked cells that have exactly one open neighbor
+    *  b. Open one of these cells at random
+    *  c. Repeat until no more cells can be opened
+    * 3. Idenfity all cells that are 'dead ends' - open cells with one neighbor.
+    * 4. For approximately half these cells, pick one of their closed neighbors at random and open it.
+    */
     void GenerateShip() {
         // choose a random square to open
         Vector2 start = new Vector2(Mathf.RoundToInt(Random.Range(0, dim)), Mathf.RoundToInt(Random.Range(0, dim)));
@@ -189,8 +192,8 @@ public class ShipManager : MonoBehaviour
     }
 
     /**
-     * Places the captain in a random open node
-     */
+    * Places the captain in a random open node
+    */
     void PlaceCaptain() {
         List<Vector2> openNodes = new List<Vector2>();
         foreach (KeyValuePair<Vector2, Node> entry in nodes) {
@@ -200,17 +203,16 @@ public class ShipManager : MonoBehaviour
         }
 
         Vector2 chosen = openNodes[Mathf.RoundToInt(Random.Range(0, openNodes.Count - 1))];
-        GetNode(chosen).occupied = true;
-
-        Captain captain = Instantiate(this.captain, new Vector3(chosen.x, chosen.y, 0), Quaternion.identity);
+        captain = Instantiate(this.captainRef, new Vector3(chosen.x, chosen.y, 0), Quaternion.identity);
+        captain.pos = chosen;
     }
 
     /**
-     * Boards k aliens in random open nodes
-     */
+    * Boards k aliens in random open nodes
+    */
     void BoardAliens() {
         GameObject fleet = new GameObject("Fleet");
-        aliens = new Dictionary<Vector2, Alien>();
+        aliens = new List<Alien>();
 
         List<Vector2> openNodes = new List<Vector2>();
         foreach (KeyValuePair<Vector2, Node> entry in nodes) {
@@ -230,10 +232,28 @@ public class ShipManager : MonoBehaviour
             chosenNode.occupied = true;
             Alien alien = Instantiate(this.alien, new Vector3(chosen.x, chosen.y, 0), Quaternion.identity);
             alien.transform.parent = fleet.transform;
-            aliens.Add(new Vector2(chosen.x, chosen.y), alien);
+            alien.pos = chosen;
+            aliens.Add(alien);
         }
     }
 
+    void PlaceBot() {
+        List<Vector2> openNodes = new List<Vector2>();
+        foreach (KeyValuePair<Vector2, Node> entry in nodes) {
+            if (entry.Value.open && !entry.Value.occupied) {
+                openNodes.Add(entry.Key);
+            }
+        }
+
+        Vector2 chosen = openNodes[Mathf.RoundToInt(Random.Range(0, openNodes.Count - 1))];
+        GetNode(chosen).occupied = true;
+        bot = Instantiate(botRef, new Vector3(chosen.x, chosen.y, 0), Quaternion.identity);
+        botRef.pos = chosen;
+    }
+
+    /**
+    * Given a position, returns a list of all adjacent positions
+    */
     List<Vector2> GetNeighbors(Vector2 pos) {
         List<Vector2> neighbors = new List<Vector2>
         {
@@ -243,8 +263,13 @@ public class ShipManager : MonoBehaviour
             new Vector2(pos.x, pos.y - 1)
         };
         return neighbors;
+
+
     }
 
+    /**
+    * Given a position, returns the node at that position, or null if there is no node there
+    */
     public Node GetNode(Vector2 pos) {
         if (nodes.ContainsKey(pos)) {
             return nodes[pos];
