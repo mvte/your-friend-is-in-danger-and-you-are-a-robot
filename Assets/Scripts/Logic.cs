@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,10 +11,16 @@ public class Logic : MonoBehaviour
     public Bot1 bot1Ref;
     public GameObject cam;
     public bool running;
-    public int steps;
     public int runs = 1;
+    public int MAX_STEPS = 1000;
 
-    public bool animate = false;
+    // per run
+    private int steps;
+    // per simulation
+    private int successes;
+    private int failures;
+    private List<int> stepsOnFailure = new List<int>();
+
     private float accumulatedTime = 0;
     // Start is called before the first frame update
     void Start()
@@ -20,18 +28,62 @@ public class Logic : MonoBehaviour
         ship.Init(bot1Ref);
         cam.transform.position = new Vector3(1, ship.dim/2 - 0.5f, -10);
         cam.GetComponent<Camera>().orthographicSize = ship.dim * 9 / 16;
-
-        // only for now
-        RunSimulation();
     } 
 
     //TODO: map to button
-    public void RunSimulation() {    
+    public void RunSimulation(int dim = 32, int botSelection = 0, int alienCount = 32, int simCount = 1) {    
         Debug.Log("Simulation started");
-        running = true;
         ship.Reset();
+        ship.Init(bot1Ref, dim, alienCount);
+        cam.transform.position = new Vector3(1, ship.dim/2 - 0.5f, -10);
+        cam.GetComponent<Camera>().orthographicSize = ship.dim * 9 / 16;
         ship.Ready();
+
+        stepsOnFailure = new List<int>();
+        steps = 0;
+        successes = 0;
+        failures = 0;
+        runs = simCount;
+        running = true;
     }
+
+    public void EndRun(bool success) {
+        running = false;
+
+        if(success) {
+            successes++;
+        } else {
+            failures++;
+            stepsOnFailure.Add(steps);
+        }
+
+        steps = 0;
+        runs--;
+        if(runs == 0) {
+            EndSimulation();
+            return;
+        }
+
+        ship.Reset();
+        ship.Init(bot1Ref);
+        ship.Ready();
+
+        running = true;
+    }
+
+    public void EndSimulation() {
+        Debug.Log("Simulation Ended");
+        Debug.Log("Successes: " + successes);
+        Debug.Log("Failures: " + failures);
+        
+        float avgStepsOnFailure = 0;
+        foreach(int steps in stepsOnFailure) {
+            avgStepsOnFailure += steps;
+        }
+        avgStepsOnFailure /= stepsOnFailure.Count;
+        Debug.Log("Average steps on failure: " + avgStepsOnFailure);
+    }
+
 
     // Update is called once per frame
     void Update()
@@ -39,18 +91,12 @@ public class Logic : MonoBehaviour
         if(!running) {
             return;
         }
-        if(steps > 1000) {
-            steps = 0;
-            Debug.Log("simulation end");
-            runs--;
+        if(steps >= MAX_STEPS) {
+            Debug.Log("Max steps reached");
+            EndRun(false);
             return;
         }
-        if(runs == 0) {
-            running = false;
-            return;
-        }
-
-        if(animate) {
+        if(runs == 1) {
             accumulatedTime += Time.deltaTime;
             if(accumulatedTime < 0.2f) {
                 return;
@@ -58,6 +104,13 @@ public class Logic : MonoBehaviour
         }
         accumulatedTime = 0;
 
+        Step();
+    }
+    
+    /**
+    * Advances the simulation by one step
+    */
+    private void Step() {
         // advance the bot
         ship.bot.computeNextStep(ship);
 
@@ -65,14 +118,14 @@ public class Logic : MonoBehaviour
         Node botNode = ship.GetNode(ship.bot.pos);
         if(botNode.occupied) {
             Debug.Log("Bot hit alien");
-            steps = 1001;
+            EndRun(false);
             return;
         }
         
         // determine if the bot is on the captain
         if(ship.bot.pos == ship.captain.pos) {
             Debug.Log("Bot reached the captain");
-            steps = 1001;
+            EndRun(true);
             return;
         }
 
@@ -86,13 +139,12 @@ public class Logic : MonoBehaviour
         // check if the bot is on an alien
         if(botNode.occupied) {
             Debug.Log("Bot hit alien");
-            steps = 1001;
+            EndRun(false);
             return;
         }
 
         steps++;
     }
-    
 }
 
 // c# doesn't have it's own list shuffle :/
