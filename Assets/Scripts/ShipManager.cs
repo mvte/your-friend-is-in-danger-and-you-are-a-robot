@@ -146,7 +146,7 @@ public class ShipManager : MonoBehaviour
             }
 
             // otherwise, pick a random candidate and open it
-            Vector2 chosen = eligible[Mathf.RoundToInt(Random.Range(0, eligible.Count - 1))];
+            Vector2 chosen = eligible[Random.Range(0, eligible.Count)];
             GetNode(chosen).Open();
             openNodes.Add(chosen);
         }
@@ -184,7 +184,7 @@ public class ShipManager : MonoBehaviour
                 continue;
             }
 
-            Vector2 chosen = closedNeighbors[Mathf.RoundToInt(Random.Range(0, closedNeighbors.Count - 1))];
+            Vector2 chosen = closedNeighbors[Random.Range(0, closedNeighbors.Count)];
             GetNode(chosen).Open();
             openNodes.Add(chosen);
         }
@@ -202,7 +202,7 @@ public class ShipManager : MonoBehaviour
             }
         }
 
-        Vector2 chosen = openNodes[Mathf.RoundToInt(Random.Range(0, openNodes.Count - 1))];
+        Vector2 chosen = openNodes[Mathf.RoundToInt(Random.Range(0, openNodes.Count))];
         captain = Instantiate(this.captainRef, new Vector3(chosen.x, chosen.y, 0), Quaternion.identity);
         captain.pos = chosen;
     }
@@ -245,26 +245,41 @@ public class ShipManager : MonoBehaviour
             }
         }
 
-        Vector2 chosen = openNodes[Mathf.RoundToInt(Random.Range(0, openNodes.Count - 1))];
-        GetNode(chosen).occupied = true;
+        Vector2 chosen = openNodes[Mathf.RoundToInt(Random.Range(0, openNodes.Count))];
         bot = Instantiate(botRef, new Vector3(chosen.x, chosen.y, 0), Quaternion.identity);
-        botRef.pos = chosen;
+        bot.pos = chosen;
     }
 
     /**
-    * Given a position, returns a list of all adjacent positions
+    * Given a position vector, returns a list of all adjacent position vector
     */
     List<Vector2> GetNeighbors(Vector2 pos) {
         List<Vector2> neighbors = new List<Vector2>
         {
-            new Vector2(pos.x + 1, pos.y),
-            new Vector2(pos.x - 1, pos.y),
-            new Vector2(pos.x, pos.y + 1),
-            new Vector2(pos.x, pos.y - 1)
+            (pos + Vector2.right),
+            (pos + Vector2.left),
+            (pos + Vector2.up),
+            (pos + Vector2.down)
         };
         return neighbors;
+    }
 
+    /**
+    * Returns a list of valid nodes adjacent to a given position. 
+    * Valid means that the nodes are not occupied or closed.
+    */
+    public List<Node> GetValidNeighborNodes(Vector2 pos) {
+        List<Node> valid = new List<Node>();
+        List<Vector2> neighbors = GetNeighbors(pos);
+        
+        foreach(Vector2 neighbor in neighbors) {
+            Node validNode = GetNode(neighbor);
+            if(validNode != null && validNode.open && !validNode.occupied) {
+                valid.Add(validNode);
+            }
+        }
 
+        return valid;
     }
 
     /**
