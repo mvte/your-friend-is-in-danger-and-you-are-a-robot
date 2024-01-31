@@ -10,6 +10,8 @@ public class Node : MonoBehaviour
     public Color closedColor;
     public SpriteRenderer sr;
     public Vector2 pos;
+    public GameObject highlight;
+    public bool highlighted = false;
 
     [ContextMenu("Open")]
     public void Open() {
@@ -20,5 +22,10 @@ public class Node : MonoBehaviour
     public void Close() {
         open = false;
         sr.color = closedColor;
+    }
+
+    public void Highlight() {
+        highlighted = !highlighted;
+        highlight.SetActive(highlighted);
     }
 }
