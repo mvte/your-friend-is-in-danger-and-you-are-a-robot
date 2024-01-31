@@ -7,9 +7,15 @@ public class Alien : MonoBehaviour
     public Vector2 pos;
     
     public void computeNextStep(ShipManager ship) {
-        //TODO: implement this
-        pos = new Vector2(pos.x, pos.y + 1);
+        List<Node> neighbors = ship.GetValidNeighborNodes(pos);
+        if(neighbors.Count == 0) {
+            return;
+        }
 
-        transform.position = new Vector3(pos.x, pos.y, 0);
+        Node chosen = neighbors[Random.Range(0, neighbors.Count)];
+        chosen.occupied = true;
+        ship.GetNode(pos).occupied = false;
+        pos = chosen.pos;
+        transform.position = new Vector3(chosen.pos.x, chosen.pos.y, 0);
     }
 }
