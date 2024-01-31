@@ -16,7 +16,7 @@ public class ShipManager : MonoBehaviour
     public Dictionary<Vector2, Node> nodes;
     public List<Alien> aliens;
 
-    public void Init(Bot botRef, int dim = -1, int k = -1, int sims = 1) {
+    public void Init(Bot botRef, int dim = -1, int k = -1) {
         if (dim != -1) {
             this.dim = dim;
         }  
@@ -45,6 +45,19 @@ public class ShipManager : MonoBehaviour
 
     public void Reset() {
         Debug.Log("Resetting");
+
+        // destroy all children
+        foreach (Transform child in transform) {
+            Destroy(child.gameObject);
+        }
+
+        Destroy(GameObject.Find("Fleet"));
+        Destroy(GameObject.Find("Bot1(Clone)"));
+        Destroy(GameObject.Find("Captain(Clone)"));
+        nodes = null;
+        aliens = null;
+        captain = null;
+        bot = null;
     }
 
     void CreateGrid() {
@@ -240,7 +253,7 @@ public class ShipManager : MonoBehaviour
     void PlaceBot() {
         List<Vector2> openNodes = new List<Vector2>();
         foreach (KeyValuePair<Vector2, Node> entry in nodes) {
-            if (entry.Value.open && !entry.Value.occupied) {
+            if (entry.Value.open && !entry.Value.occupied && captain.pos != entry.Key) {
                 openNodes.Add(entry.Key);
             }
         }
