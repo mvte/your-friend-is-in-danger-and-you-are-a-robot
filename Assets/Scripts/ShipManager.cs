@@ -38,8 +38,8 @@ public class ShipManager : MonoBehaviour
     }
 
     public void Ready() {
-        PlaceCaptain();
         BoardAliens();
+        PlaceCaptain();
         PlaceBot();
     }
 
