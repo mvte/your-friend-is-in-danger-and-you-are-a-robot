@@ -1,6 +1,8 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using UnityEditor.Search;
 using UnityEngine;
+using Utils;
+
 
 public class ShipManager : MonoBehaviour
 {
@@ -12,9 +14,10 @@ public class ShipManager : MonoBehaviour
     public Captain captain;
     public int dim;
     public int k;
-
     public Dictionary<Vector2, Node> nodes;
     public List<Alien> aliens;
+
+    private ConcurrentBag<bool[,]> pregeneratedShips;
 
     public void Init(Bot botRef, int dim = -1, int k = -1) {
         if (dim != -1) {
@@ -35,6 +38,10 @@ public class ShipManager : MonoBehaviour
         this.botRef = botRef;
         CreateGrid();
         GenerateShip();
+    }
+
+    public void PregenerateShips(int dim, int numShips) {
+        pregeneratedShips = ParallelShipGenerator.GenerateParallelShips(dim, numShips);
     }
 
     public void Ready() {
@@ -115,91 +122,26 @@ public class ShipManager : MonoBehaviour
     *  b. Open one of these cells at random
     *  c. Repeat until no more cells can be opened
     * 3. Idenfity all cells that are 'dead ends' - open cells with one neighbor.
-    * 4. For approximately half these cells, pick one of their closed neighbors at random and open it.
+    * 4. For approximately half these cells, pick one of their closed neighbors at random and open it.\
+    *
+    * TODO: if we have no pregenerated ships, open all nodes
     */
     void GenerateShip() {
-        // choose a random square to open
-        Vector2 start = new Vector2(Mathf.RoundToInt(Random.Range(0, dim)), Mathf.RoundToInt(Random.Range(0, dim)));
-        GetNode(start).Open();
-        
-        List<Vector2> openNodes = new List<Vector2>{ start };
-        while (openNodes.Count > 0) {
-            // find all blocked nodes with open neighbors
-            HashSet<Vector2> candidates = new HashSet<Vector2>();
-            foreach (Vector2 pos in openNodes) {
-                foreach (Vector2 neighbor in GetNeighbors(pos)) {
-                    Node neighborNode = GetNode(neighbor);
-                    if (neighborNode != null && !neighborNode.open) {
-                        candidates.Add(neighbor);
+        if(pregeneratedShips != null && pregeneratedShips.TryTake(out bool[,] ship)) {
+            for (int x = 0; x < dim; x++) {
+                for (int y = 0; y < dim; y++) {
+                    if (ship[x, y]) {
+                        nodes[new Vector2(x, y)].Open();
                     }
                 }
             }
-
-            // of those blocked nodes, find the ones with exactly one open neighbor
-            List<Vector2> eligible = new List<Vector2>();
-            foreach(Vector2 candidate in candidates) {
-                int numOpenNeighbors = 0;
-                foreach (Vector2 neighbor in GetNeighbors(candidate)) {
-                    Node neighborNode = GetNode(neighbor);
-                    if (neighborNode != null && neighborNode.open) {
-                        numOpenNeighbors++;
-                    }
-                }
-
-                if (numOpenNeighbors == 1) {
-                    eligible.Add(candidate);
-                } 
-            }
-
-            // if there are no eligible candidates, we're done
-            if (eligible.Count == 0) {
-                break;
-            }
-
-            // otherwise, pick a random candidate and open it
-            Vector2 chosen = eligible[Random.Range(0, eligible.Count)];
-            GetNode(chosen).Open();
-            openNodes.Add(chosen);
-        }
-
-        // find all dead ends
-        List<Vector2> deadEnds = new List<Vector2>();
-        foreach (Vector2 pos in openNodes) {
-            int numOpenNeighbors = 0;
-            foreach (Vector2 neighbor in GetNeighbors(pos)) {
-                Node neighborNode = GetNode(neighbor);
-                if (neighborNode != null && neighborNode.open) {
-                    numOpenNeighbors++;
+        } else {
+            for (int x = 0; x < dim; x++) {
+                for (int y = 0; y < dim; y++) {
+                    nodes[new Vector2(x, y)].Open();
                 }
             }
-
-            if (numOpenNeighbors == 1) {
-                deadEnds.Add(pos);
-            }
         }
-
-        // open half of the dead ends
-        foreach(Vector2 pos in deadEnds) {
-            if (Random.Range(0, 2) == 0) {
-                continue;
-            }
-
-            List<Vector2> closedNeighbors = new List<Vector2>();
-            foreach (Vector2 neighbor in GetNeighbors(pos)) {
-                Node neighborNode = GetNode(neighbor);
-                if (neighborNode != null && !neighborNode.open) {
-                    closedNeighbors.Add(neighbor);
-                }
-            }
-            if (closedNeighbors.Count == 0) {
-                continue;
-            }
-
-            Vector2 chosen = closedNeighbors[Random.Range(0, closedNeighbors.Count)];
-            GetNode(chosen).Open();
-            openNodes.Add(chosen);
-        }
-        
     }
 
     /**

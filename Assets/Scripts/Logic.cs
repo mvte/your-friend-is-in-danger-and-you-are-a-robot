@@ -45,8 +45,11 @@ public class Logic : MonoBehaviour
     //TODO: map to button
     public void RunSimulation(int dim = 32, int botSelection = 0, int alienCount = 32, int simCount = 1) {    
         Debug.Log("Simulation started");
+        timeStart = Time.time;
         formManager.HideButtonsAndShowRunning();
+
         ship.Reset();
+        ship.PregenerateShips(dim, simCount);
         ship.Init(bot1Ref, dim, alienCount);
         cam.transform.position = new Vector3(1, ship.dim/2 - 0.5f, -10);
         cam.GetComponent<Camera>().orthographicSize = ship.dim * 9 / 16;
@@ -54,7 +57,6 @@ public class Logic : MonoBehaviour
 
 
         animate = simCount == 1;
-        timeStart = Time.time;
         stepsOnFailure = new List<int>();
         steps = 0;
         successes = 0;
