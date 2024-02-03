@@ -44,8 +44,6 @@ public class ShipManager : MonoBehaviour
     }
 
     public void Reset() {
-        Debug.Log("Resetting");
-
         // destroy all children
         foreach (Transform child in transform) {
             Destroy(child.gameObject);
