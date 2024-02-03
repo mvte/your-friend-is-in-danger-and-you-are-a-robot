@@ -12,6 +12,7 @@ public class Logic : MonoBehaviour
     public Bot1 bot1Ref;
     public GameObject cam;
     public FormManager formManager;
+    public ReportManager reportManager;
     public bool running;
     public int runs = 1;
     public int MAX_STEPS = 1000;
@@ -26,6 +27,13 @@ public class Logic : MonoBehaviour
     private float accumulatedTime = 0;
     private float timeStart;
     private bool animate;
+
+    //config info
+    private int configAlienCount = 32;
+    private int configSimCount = 1;
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -53,6 +61,9 @@ public class Logic : MonoBehaviour
         failures = 0;
         runs = simCount;
         running = true;
+
+        configSimCount = simCount;
+        configAlienCount = alienCount;
     }
 
     public void EndRun(bool success) {
@@ -87,11 +98,19 @@ public class Logic : MonoBehaviour
         avgStepsOnFailure /= stepsOnFailure.Count;
 
         Debug.Log("Simulation Ended");
-        Debug.Log("Successes: " + successes);
-        Debug.Log("Failures: " + failures);
-        Debug.Log("Average steps on failure: " + avgStepsOnFailure);
-        Debug.Log("Time: " + (Time.time - timeStart));
         formManager.ShowButtonsAndHideRunning();
+        reportManager.ShowReport(
+            // config
+            ship.dim.ToString(),
+            configAlienCount.ToString(),
+            configSimCount.ToString(), 
+            "Bot 1", 
+            // results
+            successes.ToString(), 
+            failures.ToString(), 
+            avgStepsOnFailure.ToString(), 
+            (Time.time - timeStart).ToString()
+        );
     }
 
 
