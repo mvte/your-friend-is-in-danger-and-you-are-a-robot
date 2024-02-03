@@ -10,6 +10,7 @@ public class Logic : MonoBehaviour
     public ShipManager ship;
     public Bot1 bot1Ref;
     public GameObject cam;
+    public FormManager formManager;
     public bool running;
     public int runs = 1;
     public int MAX_STEPS = 1000;
@@ -33,6 +34,7 @@ public class Logic : MonoBehaviour
     //TODO: map to button
     public void RunSimulation(int dim = 32, int botSelection = 0, int alienCount = 32, int simCount = 1) {    
         Debug.Log("Simulation started");
+        formManager.HideButtonsAndShowRunning();
         ship.Reset();
         ship.Init(bot1Ref, dim, alienCount);
         cam.transform.position = new Vector3(1, ship.dim/2 - 0.5f, -10);
@@ -82,6 +84,7 @@ public class Logic : MonoBehaviour
         }
         avgStepsOnFailure /= stepsOnFailure.Count;
         Debug.Log("Average steps on failure: " + avgStepsOnFailure);
+        formManager.ShowButtonsAndHideRunning();
     }
 
 
