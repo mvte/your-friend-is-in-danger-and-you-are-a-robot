@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Logic : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class Logic : MonoBehaviour
     private List<int> stepsOnFailure = new List<int>();
 
     private float accumulatedTime = 0;
+    private float timeStart;
+    private bool animate;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,6 +44,9 @@ public class Logic : MonoBehaviour
         cam.GetComponent<Camera>().orthographicSize = ship.dim * 9 / 16;
         ship.Ready();
 
+
+        animate = simCount == 1;
+        timeStart = Time.time;
         stepsOnFailure = new List<int>();
         steps = 0;
         successes = 0;
@@ -74,16 +80,17 @@ public class Logic : MonoBehaviour
     }
 
     public void EndSimulation() {
-        Debug.Log("Simulation Ended");
-        Debug.Log("Successes: " + successes);
-        Debug.Log("Failures: " + failures);
-        
         float avgStepsOnFailure = 0;
         foreach(int steps in stepsOnFailure) {
             avgStepsOnFailure += steps;
         }
         avgStepsOnFailure /= stepsOnFailure.Count;
+
+        Debug.Log("Simulation Ended");
+        Debug.Log("Successes: " + successes);
+        Debug.Log("Failures: " + failures);
         Debug.Log("Average steps on failure: " + avgStepsOnFailure);
+        Debug.Log("Time: " + (Time.time - timeStart));
         formManager.ShowButtonsAndHideRunning();
     }
 
@@ -99,7 +106,7 @@ public class Logic : MonoBehaviour
             EndRun(false);
             return;
         }
-        if(runs == 1) {
+        if(animate) {
             accumulatedTime += Time.deltaTime;
             if(accumulatedTime < 0.2f) {
                 return;
@@ -120,14 +127,12 @@ public class Logic : MonoBehaviour
         // determine if the bot is on an alien
         Node botNode = ship.GetNode(ship.bot.pos);
         if(botNode.occupied) {
-            Debug.Log("Bot hit alien");
             EndRun(false);
             return;
         }
         
         // determine if the bot is on the captain
         if(ship.bot.pos == ship.captain.pos) {
-            Debug.Log("Bot reached the captain");
             EndRun(true);
             return;
         }
@@ -141,7 +146,6 @@ public class Logic : MonoBehaviour
 
         // check if the bot is on an alien
         if(botNode.occupied) {
-            Debug.Log("Bot hit alien");
             EndRun(false);
             return;
         }
