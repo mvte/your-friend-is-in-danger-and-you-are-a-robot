@@ -25,17 +25,29 @@ This method aggregates the results of all of the runs, and displays them neatly.
 
 ### Potential GenerateShip Speed Up
 We can potentially speed up GenerateShip by decoupling its logic from the UnityEngine library. 
-Run the algorithm asynchronously on a grid of booleans as opposed to on the actual nodes Dictionary. 
-We then save the boolean grid, and reference it when we want to generate the the visual representation of the ship. 
+First, Run the algorithm asynchronously on a grid of booleans as opposed to on the actual nodes Dictionary. 
+Then save the boolean grid, and reference it when we want to generate the the visual representation of the ship. 
 We can save as many boolean grids in memory as we need (ideally, the same as the number of runs).
-This approach wouldn't make as much of a difference on 
-We can also potentially parallelize different parts of the algorithm. Such as:
+Further optimizations can be found can in parallelizing different parts of the algorithm. Such as:
 - finding blocked nodes with open nieghbors
 - finding blocked nodes with exactly one open neighbor
 - finding dead ends
 
 In all of these cases, we should use the ConcurrentBag class
 
-Caching neighbors could also be of use. 
-To maintain consistency, record the amount of time it takes to run 100 simulations
-Also, keep note of <a href="https://stackoverflow.com/questions/19102966/parallel-foreach-vs-task-run-and-task-whenall">this<a>
+To maintain consistency, record the amount of time it takes to run 100 simulations using a 32x32 grid and 32 aliens.
+
+
+#### GenerateShip stats
+Change | Time 
+---|---
+No Optimization | 37.29915s
+Parallel Processing of Nodes | 42.05054s
+Pregenerate ship layouts | 10.85372s
+Pregenerated in built env | 4.79s (!!!)
+
+
+#### Notes
+- Parallel processing of nodes is slower! Probably because of the overhead of the Parallel.foreach function itself. 
+- holy smokes pregeneration is cracked
+- neighbor caching?
