@@ -28,3 +28,14 @@ We can potentially speed up GenerateShip by decoupling its logic from the UnityE
 Run the algorithm asynchronously on a grid of booleans as opposed to on the actual nodes Dictionary. 
 We then save the boolean grid, and reference it when we want to generate the the visual representation of the ship. 
 We can save as many boolean grids in memory as we need (ideally, the same as the number of runs).
+This approach wouldn't make as much of a difference on 
+We can also potentially parallelize different parts of the algorithm. Such as:
+- finding blocked nodes with open nieghbors
+- finding blocked nodes with exactly one open neighbor
+- finding dead ends
+
+In all of these cases, we should use the ConcurrentBag class
+
+Caching neighbors could also be of use. 
+To maintain consistency, record the amount of time it takes to run 100 simulations
+Also, keep note of <a href="https://stackoverflow.com/questions/19102966/parallel-foreach-vs-task-run-and-task-whenall">this<a>
