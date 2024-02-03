@@ -22,3 +22,9 @@ The end method has the following responsibilities
 
 #### End Simulation Method
 This method aggregates the results of all of the runs, and displays them neatly. 
+
+### Potential GenerateShip Speed Up
+We can potentially speed up GenerateShip by decoupling its logic from the UnityEngine library. 
+Run the algorithm asynchronously on a grid of booleans as opposed to on the actual nodes Dictionary. 
+We then save the boolean grid, and reference it when we want to generate the the visual representation of the ship. 
+We can save as many boolean grids in memory as we need (ideally, the same as the number of runs).
