@@ -6952,6 +6952,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ship: {fileID: 209525698}
   bot1Ref: {fileID: 3097526100195686875, guid: 772bff144a4a1457aab61e1b92dd924b, type: 3}
+  bot2Ref: {fileID: 6902613726189184955, guid: c2c47749483a541ba8a9c346a4a987e1, type: 3}
   cam: {fileID: 519420028}
   formManager: {fileID: 182042596}
   reportManager: {fileID: 1390395797}
