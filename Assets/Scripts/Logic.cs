@@ -95,7 +95,7 @@ public class Logic : MonoBehaviour
         }
 
         ship.Reset();
-        ship.Init(bot1Ref);
+        ship.Init(bots[configBotSelection]);
         ship.Ready();
 
         running = true;
