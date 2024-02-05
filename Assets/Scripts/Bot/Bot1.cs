@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Bot1 : Bot
 {
+    public override string botName { get { return "Static Path (Bot 1)";} }
     List<Node> path;
 
     /**
@@ -17,6 +18,11 @@ public class Bot1 : Bot
             path = a_star(startNode, captainNode, ship.aliens, ship.nodes, ship);
         }
         if(path.Count == 0) {
+            if (this.pos == ship.captain.pos) {
+                return;
+            }
+            // ensures that a path gets recomputed if no path can be found
+            path = null;
             return;
         }
 
