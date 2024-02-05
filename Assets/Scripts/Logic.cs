@@ -10,6 +10,7 @@ public class Logic : MonoBehaviour
 {
     public ShipManager ship;
     public Bot1 bot1Ref;
+    public Bot2 bot2Ref;
     public GameObject cam;
     public FormManager formManager;
     public ReportManager reportManager;
@@ -17,6 +18,7 @@ public class Logic : MonoBehaviour
     public int runs = 1;
     public int MAX_STEPS = 1000;
 
+    private List<Bot> bots;
     // per run
     private int steps;
     // per simulation
@@ -31,6 +33,7 @@ public class Logic : MonoBehaviour
     //config info
     private int configAlienCount = 32;
     private int configSimCount = 1;
+    private int configBotSelection = 0;
 
 
 
@@ -40,6 +43,11 @@ public class Logic : MonoBehaviour
         ship.Init(bot1Ref);
         cam.transform.position = new Vector3(1, ship.dim/2 - 0.5f, -10);
         cam.GetComponent<Camera>().orthographicSize = ship.dim * 9 / 16;
+
+        bots = new List<Bot>{
+            bot1Ref,
+            bot2Ref,
+        };
     } 
 
     //TODO: map to button
@@ -50,7 +58,7 @@ public class Logic : MonoBehaviour
 
         ship.Reset();
         ship.PregenerateShips(dim, simCount);
-        ship.Init(bot1Ref, dim, alienCount);
+        ship.Init(bots[botSelection], dim, alienCount);
         cam.transform.position = new Vector3(1, ship.dim/2 - 0.5f, -10);
         cam.GetComponent<Camera>().orthographicSize = ship.dim * 9 / 16;
         ship.Ready();
@@ -66,6 +74,7 @@ public class Logic : MonoBehaviour
 
         configSimCount = simCount;
         configAlienCount = alienCount;
+        configBotSelection = botSelection;
     }
 
     public void EndRun(bool success) {
@@ -98,6 +107,7 @@ public class Logic : MonoBehaviour
             avgStepsOnFailure += steps;
         }
         avgStepsOnFailure /= stepsOnFailure.Count;
+        string botName = bots[configBotSelection].botName;
 
         Debug.Log("Simulation Ended");
         formManager.ShowButtonsAndHideRunning();
@@ -106,7 +116,7 @@ public class Logic : MonoBehaviour
             ship.dim.ToString(),
             configAlienCount.ToString(),
             configSimCount.ToString(), 
-            "Bot 1", 
+            botName, 
             // results
             successes.ToString(), 
             failures.ToString(), 
