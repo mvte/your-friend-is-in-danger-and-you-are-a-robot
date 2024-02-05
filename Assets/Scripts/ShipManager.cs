@@ -57,7 +57,7 @@ public class ShipManager : MonoBehaviour
         }
 
         Destroy(GameObject.Find("Fleet"));
-        Destroy(GameObject.Find("Bot1(Clone)"));
+        Destroy(GameObject.Find("Bot"));
         Destroy(GameObject.Find("Captain(Clone)"));
         nodes = null;
         aliens = null;
@@ -201,6 +201,7 @@ public class ShipManager : MonoBehaviour
         Vector2 chosen = openNodes[Mathf.RoundToInt(Random.Range(0, openNodes.Count))];
         bot = Instantiate(botRef, new Vector3(chosen.x, chosen.y, 0), Quaternion.identity);
         bot.pos = chosen;
+        bot.name = "Bot";
     }
 
     /**
