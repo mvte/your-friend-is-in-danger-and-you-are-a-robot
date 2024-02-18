@@ -44,7 +44,7 @@ public class Bot3 : Bot {
     }
     
 
-    private List<Node> a_star(Node s, Node g, List<Alien> aliens, Dictionary<Vector2, Node> nodes, ShipManager ship) {
+    private List<Node> a_star(Node s, Node g, List<Alien> aliens, Dictionary<Vector2, Node> nodes, ShipManager ship, bool useBuffer = true) {
         var fringe = new PriorityQueue<Node, float>();
         fringe.Enqueue(s, 0);
         var prev = new Dictionary<Node, Node>();
@@ -59,6 +59,12 @@ public class Bot3 : Bot {
             }
             List<Node> neighbors = ship.GetValidNeighborNodes(curr.pos);
             foreach(Node n in neighbors) {
+                foreach(Node nNeighbor in ship.GetNeighborNodes(n.pos)) {
+                    if(nNeighbor.occupied) {
+                        continue;
+                    }
+                }
+
                 float tempDist = dist[curr] + 1.0f;
                 if (!dist.ContainsKey(n) || tempDist < dist[n]) {
                     dist[n] = tempDist;
@@ -70,6 +76,8 @@ public class Bot3 : Bot {
 
         // there is no path to g
         if(!prev.ContainsKey(g)) {
+            // we recompute the path without the buffer (bot2 behavior)
+            if(useBuffer) return a_star(s, g, aliens, nodes, ship, false);
             return new List<Node>();
         }
 
@@ -91,12 +99,6 @@ public class Bot3 : Bot {
 
     // we use the manhattan distance as our heuristic
     private float heuristic(Node n, Node g) {
-        foreach(Node neighbor in ship.GetValidNeighborNodes(n.pos)) {
-            if(neighbor.occupied) {
-                return Mathf.Infinity;
-            }
-        }
-
         return Mathf.Abs(n.pos.x - g.pos.x) + Mathf.Abs(n.pos.y - g.pos.y);
     }
 }
