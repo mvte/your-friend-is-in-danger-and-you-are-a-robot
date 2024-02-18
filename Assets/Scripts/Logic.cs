@@ -11,6 +11,7 @@ public class Logic : MonoBehaviour
     public ShipManager ship;
     public Bot1 bot1Ref;
     public Bot2 bot2Ref;
+    public Bot3 bot3Ref;
     public GameObject cam;
     public FormManager formManager;
     public ReportManager reportManager;
@@ -47,15 +48,21 @@ public class Logic : MonoBehaviour
         bots = new List<Bot>{
             bot1Ref,
             bot2Ref,
+            bot3Ref,
         };
     } 
 
     //TODO: map to button
     public void RunSimulation(int dim = 32, int botSelection = 0, int alienCount = 32, int simCount = 1) {    
+        GameObject.Destroy(GameObject.Find("Fleet"));
+        GameObject.Destroy(GameObject.Find("Bot"));
+        GameObject.Destroy(GameObject.Find("Captain(Clone)"));
+
         Debug.Log("Simulation started");
         timeStart = Time.time;
-        formManager.HideButtonsAndShowRunning();
+        formManager.ShowStatus("Running...");
 
+        ship.Reset();
         ship.Reset();
         ship.PregenerateShips(dim, simCount);
         ship.Init(bots[botSelection], dim, alienCount);
@@ -94,6 +101,11 @@ public class Logic : MonoBehaviour
             return;
         }
 
+        GameObject.Destroy(GameObject.Find("Fleet"));
+        GameObject.Destroy(GameObject.Find("Bot"));
+        GameObject.Destroy(GameObject.Find("Captain(Clone)"));
+
+        ship.Reset();
         ship.Reset();
         ship.Init(bots[configBotSelection]);
         ship.Ready();
