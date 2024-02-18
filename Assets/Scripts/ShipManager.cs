@@ -45,8 +45,8 @@ public class ShipManager : MonoBehaviour
     }
 
     public void Ready() {
-        BoardAliens();
         PlaceCaptain();
+        BoardAliens();
         PlaceBot();
     }
 
@@ -169,7 +169,7 @@ public class ShipManager : MonoBehaviour
 
         List<Vector2> openNodes = new List<Vector2>();
         foreach (KeyValuePair<Vector2, Node> entry in nodes) {
-            if (entry.Value.open) {
+            if (entry.Value.open && entry.Key != captain.pos) {
                 openNodes.Add(entry.Key);
             }
         }
@@ -216,6 +216,23 @@ public class ShipManager : MonoBehaviour
             (pos + Vector2.down)
         };
         return neighbors;
+    }
+
+    /**
+    * Returns a list of existing nodes adjacent to a given position.
+    */
+    public List<Node> GetNeighborNodes(Vector2 pos) {
+        List<Node> neighborNodes = new List<Node>();
+        List<Vector2> neighbors = GetNeighbors(pos);
+        
+        foreach(Vector2 neighbor in neighbors) {
+            Node neighborNode = GetNode(neighbor);
+            if(neighborNode != null) {
+                neighborNodes.Add(neighborNode);
+            }
+        }
+
+        return neighborNodes;
     }
 
     /**
