@@ -1,9 +1,8 @@
 ## Things I need to do
-- Fix UI
-- Fix Simulation Logic
-- Add data recording
-- Add end of simulation screen
-- Maybe optimize ship construction algorithm. 
+- Create routine that continously runs simulations, incrementing the number of aliens after some amount of simulations.
+This routine should end when we reach a number of aliens where no simulations are successful
+- Implement Bot 3 properly, not sure that the heuristic is good enough
+    - Maybe, when we consider a node, we only add it to the priority queue if none of its neighbors are occupied by aliens.
 
 ### Simulation Logic
 1. Set runs to be the amount of simulations we run
