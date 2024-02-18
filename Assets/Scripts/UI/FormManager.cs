@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class FormManager : MonoBehaviour
 {   
@@ -34,13 +35,14 @@ public class FormManager : MonoBehaviour
     }
 
     public void onRunSim() {
-        logicRef.RunSimulation(dimension, botSelection, alientCount, simCount);
+                logicRef.RunSimulation(dimension, botSelection, alientCount, simCount);
     }
 
-    public void HideButtonsAndShowRunning() {
+    public void ShowStatus(string status) {
         onceButton.SetActive(false);
         manyButton.SetActive(false);
         runningText.SetActive(true);
+        runningText.GetComponent<TMP_Text>().text = status;
     }
 
     public void ShowButtonsAndHideRunning() {
