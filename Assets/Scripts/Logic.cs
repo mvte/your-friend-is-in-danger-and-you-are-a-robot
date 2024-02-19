@@ -12,6 +12,7 @@ public class Logic : MonoBehaviour
     public Bot1 bot1Ref;
     public Bot2 bot2Ref;
     public Bot3 bot3Ref;
+    public Bot4 bot4Ref;
     public GameObject cam;
     public FormManager formManager;
     public ReportManager reportManager;
@@ -49,6 +50,7 @@ public class Logic : MonoBehaviour
             bot1Ref,
             bot2Ref,
             bot3Ref,
+            bot4Ref,
         };
     } 
 

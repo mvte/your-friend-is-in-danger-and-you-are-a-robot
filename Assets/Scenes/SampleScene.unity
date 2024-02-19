@@ -6852,6 +6852,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Bot 3
       m_Image: {fileID: 0}
+    - m_Text: Bot 4
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -6954,6 +6956,7 @@ MonoBehaviour:
   bot1Ref: {fileID: 3097526100195686875, guid: 772bff144a4a1457aab61e1b92dd924b, type: 3}
   bot2Ref: {fileID: 6902613726189184955, guid: c2c47749483a541ba8a9c346a4a987e1, type: 3}
   bot3Ref: {fileID: -5655874054055554944, guid: 76373aa4c60ba4b86a4ee081cd33962e, type: 3}
+  bot4Ref: {fileID: -5031307149072857509, guid: 1e98f5ed059e01749bdd1c0c6b5e6b71, type: 3}
   cam: {fileID: 519420028}
   formManager: {fileID: 182042596}
   reportManager: {fileID: 1390395797}
