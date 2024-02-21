@@ -36,7 +36,6 @@ In all of these cases, we should use the ConcurrentBag class
 
 To maintain consistency, record the amount of time it takes to run 100 simulations using a 32x32 grid and 32 aliens.
 
-
 #### GenerateShip stats
 Change | Time 
 ---|---
@@ -50,3 +49,18 @@ Pregenerated in built env | 4.79s (!!!)
 - Parallel processing of nodes is slower! Probably because of the overhead of the Parallel.foreach function itself. 
 - holy smokes pregeneration is cracked
 - neighbor caching?
+
+### Refactor Logic
+- Logic is spaghetti right now
+- Implement states for Logic
+- Potential states
+    - Idle
+    - Pregeneration
+    - Running
+    - Finished
+- Idle
+    - Nothing is happening
+- Pregeneration
+    - Preparing to run, generating ships
+- Running
+    - Simulations running, 
