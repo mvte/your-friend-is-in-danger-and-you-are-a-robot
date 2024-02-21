@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class FormManager : MonoBehaviour
 {   
@@ -13,6 +14,7 @@ public class FormManager : MonoBehaviour
     public int botSelection = 0;
     public int alientCount = 32;
     public int simCount = 1;
+    public bool runUntilFailure = false;
 
     public void OnBotSelection(int index) {
         botSelection = index;
@@ -30,12 +32,17 @@ public class FormManager : MonoBehaviour
         simCount = int.Parse(value);
     }
 
+    public void onRunUntilFailureChange(Toggle value) {
+        Debug.Log(value.isOn);
+        runUntilFailure = value.isOn;
+    }
+
     public void onRunOnce() {
         logicRef.RunSimulation(dimension, botSelection, alientCount);
     }
 
     public void onRunSim() {
-                logicRef.RunSimulation(dimension, botSelection, alientCount, simCount);
+        logicRef.RunSimulation(dimension, botSelection, alientCount, simCount, runUntilFailure);
     }
 
     public void ShowStatus(string status) {
