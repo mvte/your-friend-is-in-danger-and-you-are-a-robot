@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Text;
+using TMPro;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -32,12 +34,15 @@ public class Logic : MonoBehaviour
     private float timeStart;
     private bool animate;
 
+    // per set of simulations
+    private List<SimData> data = new List<SimData>(); 
+
     //config info
+    private int configDim = 32;
+    private bool configRunUntilFailure = false;
     private int configAlienCount = 32;
     private int configSimCount = 1;
     private int configBotSelection = 0;
-
-
 
     // Start is called before the first frame update
     void Start()
@@ -55,13 +60,14 @@ public class Logic : MonoBehaviour
     } 
 
     //TODO: map to button
-    public void RunSimulation(int dim = 32, int botSelection = 0, int alienCount = 32, int simCount = 1) {    
+    public void RunSimulation(int dim = 32, int botSelection = 0, int alienCount = 32, int simCount = 1, bool runUntilFailure = false) {    
         GameObject.Destroy(GameObject.Find("Fleet"));
         GameObject.Destroy(GameObject.Find("Bot"));
         GameObject.Destroy(GameObject.Find("Captain(Clone)"));
 
         Debug.Log("Simulation started");
         timeStart = Time.time;
+        Debug.Log("Running until failure: " + runUntilFailure);
         formManager.ShowStatus("Running...");
 
         ship.Reset();
@@ -81,6 +87,8 @@ public class Logic : MonoBehaviour
         runs = simCount;
         running = true;
 
+        configDim = dim;
+        configRunUntilFailure = runUntilFailure;
         configSimCount = simCount;
         configAlienCount = alienCount;
         configBotSelection = botSelection;
@@ -122,6 +130,30 @@ public class Logic : MonoBehaviour
         }
         avgStepsOnFailure /= stepsOnFailure.Count;
         string botName = bots[configBotSelection].botName;
+
+        if(configRunUntilFailure) {
+            float successRate = (float)successes / configSimCount * 100;
+            data.Add(new SimData(configAlienCount, successRate, avgStepsOnFailure));
+
+            if(successRate < 0.03) {
+                Debug.Log("Simulation Ended (Until Failure)");
+                formManager.ShowButtonsAndHideRunning();
+                reportManager.ShowUntilFailureReport(
+                    // config
+                    ship.dim.ToString(),
+                    configAlienCount.ToString(),
+                    configSimCount.ToString(), 
+                    botName
+                );
+
+                SimData.ExportToCSV(data);
+                return;
+            }
+
+            RunSimulation(configDim, configBotSelection, configAlienCount + 1, configSimCount, configRunUntilFailure);
+            return;
+        }
+
 
         Debug.Log("Simulation Ended");
         formManager.ShowButtonsAndHideRunning();
@@ -199,6 +231,33 @@ public class Logic : MonoBehaviour
     }
 }
 
+class SimData {
+    public int numAliens;
+    public float successRate;
+    public float avgStepsOnFailure;
+
+    public SimData(int numAliens, float successRate, float avgStepsOnFailure) {
+        this.numAliens = numAliens;
+        this.successRate = successRate;
+        this.avgStepsOnFailure = avgStepsOnFailure;
+    }
+
+    public static void ExportToCSV(List<SimData> data) {
+        var sb = new StringBuilder("Number of Aliens, Success Rate, Average Steps on Failure\n");
+        foreach(SimData sim in data) {
+            sb.Append(sim.numAliens + "," + sim.successRate + "," + sim.avgStepsOnFailure + "\n");
+        }
+        string filename = "simData.csv";
+        int count = 1;
+        while(System.IO.File.Exists(filename)) {
+            filename = "simData" + count + ".csv";
+            count++;
+        }
+
+        System.IO.File.WriteAllText(filename, sb.ToString());
+    }
+}
+
 // c# doesn't have it's own list shuffle :/
 static class ListExtensions {
     public static void Shuffle<T>(this IList<T> list) {
@@ -212,5 +271,6 @@ static class ListExtensions {
         }
     }
 }
+
 
 
