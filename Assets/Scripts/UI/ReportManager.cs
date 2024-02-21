@@ -30,6 +30,21 @@ public class ReportManager : MonoBehaviour
         gameObject.SetActive(true);
     }
 
+    public void ShowUntilFailureReport(string shipDim, string numAliens, string numSims, string botLogic)
+    {
+        this.shipDim.text = shipDim;
+        this.numAliens.text = numAliens;
+        this.numSims.text = numSims;
+        this.botLogic.text = botLogic;
+        this.successes.text = "N/A";
+        this.failures.text = "N/A";
+        this.successRate.text = "N/A";
+        this.avgStepsOnFailure.text = "N/A";
+        this.timeElapsed.text = "Report saved to simData.csv";
+
+        gameObject.SetActive(true);
+    }
+
     public void HideReport()
     {
         gameObject.SetActive(false);
