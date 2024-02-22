@@ -8,15 +8,12 @@ using Utils;
 /**
 * The idea behind this bot is to prioritize safety over making progress towards the captain. 
 * At every time step, the bot chooses one of five actions:
-* 1. Move up
-* 2. Move down
-* 3. Move left
-* 4. Move right
+* 1-4. Move in one of the four cardinal directions
 * 5. Stay in place
 * The bot chooses one of these actions depending on the following criteria:
 * - The action is valid (i.e. the bot does not move onto an alien or into a closed node)
 * - The action does not place the bot in a node adjacent to an alien
-* - The action ideally is on the (buffered) path to the captain
+* - The action ideally is on the (buffered) path to the captain. If not, the bot chooses a safe action.
 */
 public class Bot4 : Bot {
 
@@ -63,7 +60,7 @@ public class Bot4 : Bot {
         // choose the node to move to
         Node chosenNode;
         if (idealNode == null) {
-            // if the ideal node does not exist, the bot chooses a random safe node
+            // if the ideal node does not exist, the bot chooses a random safe node (this is a point of optimization!)
             chosenNode = safeNodes[Random.Range(0, safeNodes.Count)];
         }
         else if(!safeNodes.Contains(idealNode)) {
