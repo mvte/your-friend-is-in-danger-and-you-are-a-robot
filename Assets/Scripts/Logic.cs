@@ -135,7 +135,7 @@ public class Logic : MonoBehaviour
             float successRate = (float)successes / configSimCount * 100;
             data.Add(new SimData(configAlienCount, successRate, avgStepsOnFailure));
 
-            if(successRate < 0.03) {
+            if(successRate < 3) {
                 Debug.Log("Simulation Ended (Until Failure)");
                 formManager.ShowButtonsAndHideRunning();
                 reportManager.ShowUntilFailureReport(
