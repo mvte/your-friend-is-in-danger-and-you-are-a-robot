@@ -47,6 +47,8 @@ public class Logic : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Application.runInBackground = true;
+
         ship.Init(bot1Ref);
         cam.transform.position = new Vector3(1, ship.dim/2 - 0.5f, -10);
         cam.GetComponent<Camera>().orthographicSize = ship.dim * 9 / 16;
