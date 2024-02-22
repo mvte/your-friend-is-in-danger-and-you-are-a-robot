@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using TMPro;
@@ -35,7 +36,7 @@ public class Logic : MonoBehaviour
     private bool animate;
 
     // per set of simulations
-    private List<SimData> data = new List<SimData>(); 
+    private SimDataWriter simDataWriter;
 
     //config info
     private int configDim = 32;
@@ -135,7 +136,8 @@ public class Logic : MonoBehaviour
 
         if(configRunUntilFailure) {
             float successRate = (float)successes / configSimCount * 100;
-            data.Add(new SimData(configAlienCount, successRate, avgStepsOnFailure));
+            simDataWriter ??= new SimDataWriter(bots[configBotSelection].botName);
+            simDataWriter.Write(new SimData(configAlienCount, successRate, avgStepsOnFailure));
 
             if(successRate < 3) {
                 Debug.Log("Simulation Ended (Until Failure)");
@@ -147,8 +149,8 @@ public class Logic : MonoBehaviour
                     configSimCount.ToString(), 
                     botName
                 );
-
-                SimData.ExportToCSV(data);
+                
+                simDataWriter = null;
                 return;
             }
 
@@ -258,6 +260,30 @@ class SimData {
 
         System.IO.File.WriteAllText(filename, sb.ToString());
     }
+    
+}
+
+class SimDataWriter {
+    private string filename;
+
+    public SimDataWriter(string botName = "") {
+        var sb = new StringBuilder("Number of Aliens, Success Rate, Average Steps on Failure\n");
+        string filename = botName + "simData.csv";
+        int count = 1;
+        while(System.IO.File.Exists(filename)) {
+            filename = "simData" + count + ".csv";
+            count++;
+        }
+
+        this.filename = filename;
+        System.IO.File.WriteAllText(filename, sb.ToString());
+    }
+
+    public void Write(SimData sim) {
+        var sb = new StringBuilder(sim.numAliens + "," + sim.successRate + "," + sim.avgStepsOnFailure + "\n");
+        System.IO.File.AppendAllText(filename, sb.ToString());
+    }
+
 }
 
 // c# doesn't have it's own list shuffle :/
