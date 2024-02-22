@@ -4653,7 +4653,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Bot 1
+  m_text: Static Path (1)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d5f79706b1362c140a38388e72cd5757, type: 2}
   m_sharedMaterial: {fileID: 6679817619540942942, guid: d5f79706b1362c140a38388e72cd5757, type: 2}
@@ -7315,13 +7315,13 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: Bot 1
+    - m_Text: Static Path (1)
       m_Image: {fileID: 0}
-    - m_Text: Bot 2
+    - m_Text: Adaptive Path (2)
       m_Image: {fileID: 0}
-    - m_Text: Bot 3
+    - m_Text: Buffered A-Path (3)
       m_Image: {fileID: 0}
-    - m_Text: Bot 4
+    - m_Text: Safe Pathing (4)
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
