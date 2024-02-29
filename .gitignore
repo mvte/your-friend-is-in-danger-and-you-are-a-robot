@@ -78,4 +78,6 @@ crashlytics-build.properties
 # vscode
 .vscode/
 
+
 /Report/*.meta
+/Report/Analysis/*.meta
