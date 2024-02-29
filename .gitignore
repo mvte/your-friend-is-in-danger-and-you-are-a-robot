@@ -77,6 +77,3 @@ crashlytics-build.properties
 
 # vscode
 .vscode/
-
-# generated files
-*.csv
