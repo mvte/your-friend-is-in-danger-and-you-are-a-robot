@@ -14,6 +14,14 @@ def compute_k(data):
     return i
 
 
+bot1Data = []
+with open('Bot1Data.csv') as file:
+    reader = csv.reader(file)
+    for row in reader:
+        bot1Data.append(row)
+    bot1K = compute_k(bot1Data)
+    print("Bot 1 K:", bot1K)
+
 bot2Data = []
 with open('Bot2Data.csv') as file:
     reader = csv.reader(file)
