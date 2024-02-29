@@ -59,12 +59,15 @@ public class Bot3 : Bot {
             }
             List<Node> neighbors = ship.GetValidNeighborNodes(curr.pos);
             foreach(Node n in neighbors) {
-                foreach(Node nNeighbor in ship.GetNeighborNodes(n.pos)) {
-                    if(nNeighbor.occupied) {
-                        continue;
+                // for each neighbor of the current node's neighbors, we check if it is occupied
+                if(useBuffer) {
+                    foreach(Node nNeighbor in ship.GetNeighborNodes(n.pos)) {
+                        if(nNeighbor.occupied) {
+                            continue;
+                        }
                     }
                 }
-
+                
                 float tempDist = dist[curr] + 1.0f;
                 if (!dist.ContainsKey(n) || tempDist < dist[n]) {
                     dist[n] = tempDist;
