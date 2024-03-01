@@ -1,4 +1,10 @@
 import csv
+import sys
+
+# pass as a command line argument the percentage threshold X, to compute K_N(X)
+# for X = 1%, run:
+# python find_k.py 1
+X = 1 if not sys.argv else float(sys.argv[1])
 
 
 def compute_k(data):
@@ -6,7 +12,7 @@ def compute_k(data):
     count = 0
     total = 0
 
-    while count == 0 or total/count <= 1:
+    while count == 0 or total/count <= X:
         total += float(data[i][1])
         count += 1
         i -= 1
