@@ -77,9 +77,8 @@ crashlytics-build.properties
 
 # vscode
 .vscode/
-
-
-/Report/*.meta
-/Report/Analysis/*.meta
-
 .idea/
+
+# csv not in analysis directory
+*.csv
+!Report/Analysis/**/*.csv
