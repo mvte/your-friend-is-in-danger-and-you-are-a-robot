@@ -139,7 +139,7 @@ public class Logic : MonoBehaviour
             simDataWriter ??= new SimDataWriter(bots[configBotSelection].botName);
             simDataWriter.Write(new SimData(configAlienCount, successRate, avgStepsOnFailure));
 
-            if(successRate < 3) {
+            if(successRate == 0) {
                 Debug.Log("Simulation Ended (Until Failure)");
                 formManager.ShowButtonsAndHideRunning();
                 reportManager.ShowUntilFailureReport(
