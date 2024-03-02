@@ -10,4 +10,4 @@ The rest of the report can be found in `/Report` as `Jan Marzan - Project 1 Repo
 All relevant code can be found in `/Assets/Scripts/`, and each file's purpose explained in the report.
 
 ## Running
-The Windows (64-bit) build is located in the `Windows/` folder and is named `your friend is in danger and you are a robot.exe`. The Mac build (Apple Silicon) is located in the `Mac/` folder and is named `yfiidayaabb`. If you would like to open the project in the Unity Editor, select the `your friend is in danger and you a robot/` directory as the root for thr project in Unity Hub and open from there. Please note that the game builds are very buggy and have high tendencies to crash. 
+The Windows (64-bit) build is located in the `Windows/` folder and is named `your friend is in danger and you are a robot.exe`. The Mac build (Apple Silicon) is located in the `Mac/` folder and is named `yfiidayaabb`. If you would like to open the project in the Unity Editor, select the `your friend is in danger and you a robot/` directory as the root for the project when adding in Unity Hub. Please note that the game builds are very buggy and have high tendencies to crash. 
