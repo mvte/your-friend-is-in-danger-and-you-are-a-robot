@@ -3,7 +3,10 @@ using UnityEngine;
 
 public abstract class Bot: MonoBehaviour
 {
+    // bot's position
     public Vector2 pos { get; set; }
+    
+    // bot's name
     public abstract string botName { get; }
 
     // computes the next step and moves the bot
