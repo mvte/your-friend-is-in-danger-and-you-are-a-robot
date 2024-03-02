@@ -19,7 +19,9 @@ public class ShipManager : MonoBehaviour
 
     private ConcurrentBag<bool[,]> pregeneratedShips;
 
+    // initializes the ship manager
     public void Init(Bot botRef, int dim = -1, int k = -1) {
+        // data validation
         if (dim != -1) {
             this.dim = dim;
         }  
@@ -35,21 +37,27 @@ public class ShipManager : MonoBehaviour
             return;
         }
 
+        // set the bot reference
         this.botRef = botRef;
+
+        // call next methods
         CreateGrid();
         GenerateShip();
     }
-
+    
+    // pregenerates ships for the simulation
     public void PregenerateShips(int dim, int numShips) {
         pregeneratedShips = ParallelShipGenerator.GenerateParallelShips(dim, numShips);
     }
 
+    // readies the simulation by placing the captain, aliens, and bot
     public void Ready() {
         PlaceCaptain();
         BoardAliens();
         PlaceBot();
     }
 
+    // resets the simulation by destroying all children and dereferencing all objects
     public void Reset() {
         // destroy all children
         foreach (Transform child in transform) {
@@ -65,6 +73,7 @@ public class ShipManager : MonoBehaviour
         bot = null;
     }
 
+    // creates the grid of nodes
     void CreateGrid() {
         nodes = new Dictionary<Vector2, Node>();
 
@@ -190,6 +199,9 @@ public class ShipManager : MonoBehaviour
         }
     }
 
+    /**
+    * Places the bot in a random open node
+    */
     void PlaceBot() {
         List<Vector2> openNodes = new List<Vector2>();
         foreach (KeyValuePair<Vector2, Node> entry in nodes) {

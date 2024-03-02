@@ -4,5 +4,6 @@ using UnityEngine;
 
 public class Captain : MonoBehaviour
 {   
+    // gives the captain position
     public Vector2 pos;
 }

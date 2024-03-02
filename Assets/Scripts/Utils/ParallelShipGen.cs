@@ -8,7 +8,7 @@ namespace Utils {
     // Generates a ship independent of any UnityEngine classes, so it can be used in a parallel context
     public class ParallelShipGenerator {
 
-        
+        // generates ships of a given dimension in parallel
         public static ConcurrentBag<bool[,]> GenerateParallelShips(int dim, int shipsToGenerate = 100) {
             var ships = new ConcurrentBag<bool[,]>();
             Parallel.For(0, shipsToGenerate, (i) => {

@@ -62,26 +62,29 @@ public class Logic : MonoBehaviour
         };
     } 
 
-    //TODO: map to button
+    // run a simulation with the given parameters
     public void RunSimulation(int dim = 32, int botSelection = 0, int alienCount = 32, int simCount = 1, bool runUntilFailure = false) {    
+        // clean up (idk why reset isn't working)
         GameObject.Destroy(GameObject.Find("Fleet"));
         GameObject.Destroy(GameObject.Find("Bot"));
         GameObject.Destroy(GameObject.Find("Captain(Clone)"));
-
+        
+        // set start time and update status
         Debug.Log("Simulation started");
         timeStart = Time.time;
         Debug.Log("Running until failure: " + runUntilFailure);
         formManager.ShowStatus("Running...");
 
-        ship.Reset();
-        ship.Reset();
+        // set up the ship
+        ship.Reset(); // it's not
+        ship.Reset(); // working!!!
         ship.PregenerateShips(dim, simCount);
         ship.Init(bots[botSelection], dim, alienCount);
         cam.transform.position = new Vector3(1, ship.dim/2 - 0.5f, -10);
         cam.GetComponent<Camera>().orthographicSize = ship.dim * 9 / 16;
         ship.Ready();
 
-
+        // set parameters for the run
         animate = simCount == 1;
         stepsOnFailure = new List<int>();
         steps = 0;
@@ -90,6 +93,7 @@ public class Logic : MonoBehaviour
         runs = simCount;
         running = true;
 
+        // set parameters for the simulation
         configDim = dim;
         configRunUntilFailure = runUntilFailure;
         configSimCount = simCount;
@@ -97,9 +101,11 @@ public class Logic : MonoBehaviour
         configBotSelection = botSelection;
     }
 
+    // end the current run 
     public void EndRun(bool success) {
         running = false;
 
+        // update the success and failure counts
         if(success) {
             successes++;
         } else {
@@ -107,26 +113,32 @@ public class Logic : MonoBehaviour
             stepsOnFailure.Add(steps);
         }
 
+        // update counters
         steps = 0;
         runs--;
         if(runs == 0) {
             EndSimulation();
             return;
         }
-
+        
+        // attempt to destroy the previous ship
         GameObject.Destroy(GameObject.Find("Fleet"));
         GameObject.Destroy(GameObject.Find("Bot"));
         GameObject.Destroy(GameObject.Find("Captain(Clone)"));
 
-        ship.Reset();
+        // set up the next run
+        ship.Reset(); // :(
         ship.Reset();
         ship.Init(bots[configBotSelection]);
         ship.Ready();
 
+        // update the status
         running = true;
     }
 
+    // end the current simulation
     public void EndSimulation() {
+        // calculate the average steps on failure
         float avgStepsOnFailure = 0;
         foreach(int steps in stepsOnFailure) {
             avgStepsOnFailure += steps;
@@ -134,11 +146,14 @@ public class Logic : MonoBehaviour
         avgStepsOnFailure /= stepsOnFailure.Count;
         string botName = bots[configBotSelection].botName;
 
+        // if we are running until failure, we need to write the data and run the next simulation
         if(configRunUntilFailure) {
+            // write the data from the current simulation
             float successRate = (float)successes / configSimCount * 100;
             simDataWriter ??= new SimDataWriter(bots[configBotSelection].botName);
             simDataWriter.Write(new SimData(configAlienCount, successRate, avgStepsOnFailure));
 
+            // if the success rate is 0, we are done
             if(successRate == 0) {
                 Debug.Log("Simulation Ended (Until Failure)");
                 formManager.ShowButtonsAndHideRunning();
@@ -154,11 +169,12 @@ public class Logic : MonoBehaviour
                 return;
             }
 
+            // go next
             RunSimulation(configDim, configBotSelection, configAlienCount + 1, configSimCount, configRunUntilFailure);
             return;
         }
 
-
+        // if we are not running until failure, we are done
         Debug.Log("Simulation Ended");
         formManager.ShowButtonsAndHideRunning();
         reportManager.ShowReport(
@@ -179,14 +195,17 @@ public class Logic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   
+        // if the simulation is not running, we don't need to do anything
         if(!running) {
             return;
         }
+        // we end the run if max steps have been reached
         if(steps >= MAX_STEPS) {
             Debug.Log("Max steps reached");
             EndRun(false);
             return;
         }
+        // slows down the simulation for visual purposes
         if(animate) {
             accumulatedTime += Time.deltaTime;
             if(accumulatedTime < 0.2f) {
@@ -195,6 +214,7 @@ public class Logic : MonoBehaviour
         }
         accumulatedTime = 0;
 
+        // advance the simulation by one time step
         Step();
     }
     
@@ -235,6 +255,7 @@ public class Logic : MonoBehaviour
     }
 }
 
+// defines a simulation data point
 class SimData {
     public int numAliens;
     public float successRate;
@@ -246,6 +267,7 @@ class SimData {
         this.avgStepsOnFailure = avgStepsOnFailure;
     }
 
+    // deprecated
     public static void ExportToCSV(List<SimData> data) {
         var sb = new StringBuilder("Number of Aliens, Success Rate, Average Steps on Failure\n");
         foreach(SimData sim in data) {
@@ -263,6 +285,7 @@ class SimData {
     
 }
 
+// writes simulation data to a csv file
 class SimDataWriter {
     private string filename;
 
