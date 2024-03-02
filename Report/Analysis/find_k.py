@@ -4,16 +4,16 @@ import sys
 # pass as a command line argument the percentage threshold X, to compute K_N(X)
 # for X = 1%, run:
 # python find_k.py 1
-X = 1 if not sys.argv else float(sys.argv[1])
+X = 1 if len(sys.argv) < 2 else float(sys.argv[1])
 
 # must be true for all m > N, not just m = len(data)
-def compute_k(data):
+def compute_k(data, x = X):
     for N in range(1, len(data) - 1):
         for m in range(N + 1, len(data)):
             total = sum(float(row[1]) for row in data[N + 1: m + 1])
             average = total / (m - N)
         
-            if average >= X:
+            if average >= x:
                 break
         else:
             return N
