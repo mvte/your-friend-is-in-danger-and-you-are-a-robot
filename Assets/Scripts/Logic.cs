@@ -8,6 +8,7 @@ using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Utils;
 
 public class Logic : MonoBehaviour
 {
@@ -315,7 +316,7 @@ static class ListExtensions {
         int n = list.Count;
         while (n > 1) {
             n--;
-            int k = Random.Range(0, n + 1);
+            int k = ThreadSafeRandom.Next(n + 1);
             T value = list[k];
             list[k] = list[n];
             list[n] = value;
