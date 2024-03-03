@@ -5,7 +5,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Unity.Mathematics;
+    using Unity.Burst.CompilerServices;
+    using Unity.Mathematics;
 
 // Generates a ship independent of any UnityEngine classes, so it can be used in a parallel context
 public class ParallelShipGenerator {
@@ -152,6 +153,7 @@ public class ParallelShipGenerator {
         return ships;
     }
 
+    public static float MUTATE_PROBABILITY = 0.1f;
     // performs uniform crossover on two ships
     private static bool[,] Crossover(Simulation sim1, Simulation sim2) {
         bool[,] ship1 = sim1.booleanShip;
@@ -165,10 +167,10 @@ public class ParallelShipGenerator {
         bool[,] child = new bool[dim, dim];
         for (int x = 0; x < dim; x++) {
             for (int y = 0; y < dim; y++) {
-                if (ship1[x, y] == ship2[x, y]) {
+                if (ship1[x, y] == ship2[x, y] && ThreadSafeRandom.NextFloat() < (1-MUTATE_PROBABILITY)) {
                     child[x, y] = ship1[x, y];
                 } else {
-                    child[x, y] = ThreadSafeRandom.NextFloat() < p ? ship1[x, y] : ship2[x, y];
+                    child[x, y] = ThreadSafeRandom.NextFloat() < p ? ship1[x, y] : !ship1[x,y];
                 }
             }
         }
