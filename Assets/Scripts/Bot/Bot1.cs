@@ -11,7 +11,7 @@ public class Bot1 : Bot
     /**
     * This bot uses A* to find the shortest path to the captain
     */
-    public override void computeNextStep(ShipManager ship) {
+    public override void computeNextStep(ShipManager ship, bool front = true) {
         // if the path is null, then we compute a new path
         if(path == null) {
             Node startNode = ship.GetNode(this.pos);

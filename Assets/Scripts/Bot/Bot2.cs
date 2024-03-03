@@ -13,7 +13,7 @@ public class Bot2 : Bot {
     public List<Node> path;
 
     public override string botName { get { return "Adaptive Path (Bot 2)";} }
-    public override void computeNextStep(ShipManager ship) {
+    public override void computeNextStep(ShipManager ship, bool front = true) {
         // we highlight the path
         if (path != null) {
             foreach(Node n in path) {

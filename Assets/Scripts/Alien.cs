@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 
 public class Alien : MonoBehaviour
 {   
     // gives the alien position
     public Vector2 pos;
+
+    public SpriteRenderer sr;
     
     // chooses the next step for the alien 
-    public void computeNextStep(ShipManager ship) {
+    public void computeNextStep(ShipManager ship, bool front = true) {
         //compute the valid neighbors
         List<Node> neighbors = ship.GetValidNeighborNodes(pos);
         // if there are no valid neighbors, don't do anything
@@ -17,10 +20,11 @@ public class Alien : MonoBehaviour
         }
 
         // choose a random valid neighbor to move to 
-        Node chosen = neighbors[Random.Range(0, neighbors.Count)];
+        Node chosen = neighbors[ThreadSafeRandom.Next(neighbors.Count)];
         chosen.occupied = true;
         ship.GetNode(pos).occupied = false;
         pos = chosen.pos;
-        transform.position = new Vector3(chosen.pos.x, chosen.pos.y, 0);
+        if(front)
+            transform.position = new Vector3(chosen.pos.x, chosen.pos.y, 0);
     }
 }

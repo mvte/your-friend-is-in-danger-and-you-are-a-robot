@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.Analytics;
 using Utils;
@@ -19,14 +20,7 @@ public class Bot4 : Bot {
     public override string botName { get { return "Safe Pathing (Bot 4)";} }
     public List<Node> path;
 
-    public override void computeNextStep(ShipManager ship) {
-        // unhighlight the previous path
-        if (path != null) {
-            foreach(Node n in path) {
-                n.Highlight();
-            }
-        }
-
+    public override void computeNextStep(ShipManager ship, bool front = true) {
         // determine the valid nodes the bot can move to (criterion 1)
         List<Node> validNodes = ship.GetValidNeighborNodes(pos);
         validNodes.Add(ship.GetNode(pos));
@@ -59,7 +53,7 @@ public class Bot4 : Bot {
         Node chosenNode;
         if (idealNode == null) {
             // if the ideal node does not exist, the bot chooses a random safe node (this is a point of optimization!)
-            chosenNode = safeNodes[Random.Range(0, safeNodes.Count)];
+            chosenNode = safeNodes[ThreadSafeRandom.Next(safeNodes.Count)];
         }
         else if(!safeNodes.Contains(idealNode)) {
             // if the ideal node exists but is not safe, the bot chooses the closest safe node to the ideal node
@@ -73,20 +67,11 @@ public class Bot4 : Bot {
             // if the ideal node exists and is safe, the bot chooses the ideal node
             chosenNode = idealNode;
         }
-        
-        // if we are not following the path, then we unhighlight the path
-        if(chosenNode != idealNode) {
-            // unhighlight the path
-            foreach(Node n in path) {
-                n.Highlight();
-            }
-            //nullify the path so we don't highlight it again
-            path = null;
-        }
 
         // move to the chosen node
         pos = chosenNode.pos;
-        transform.position = new Vector3(chosenNode.pos.x, chosenNode.pos.y, 0);
+        if(front)
+            transform.position = new Vector3(chosenNode.pos.x, chosenNode.pos.y, 0);
     }
 
     private List<Node> a_star(Node s, Node g, ShipManager ship) {
@@ -114,12 +99,18 @@ public class Bot4 : Bot {
             // get the neighbors of the current node
             List<Node> neighbors = ship.GetValidNeighborNodes(curr.pos);
             foreach(Node n in neighbors) {
+                bool skip = false;
                 // for each neighbor of the current node's neighbors, we check if it is occupied
                 foreach(Node nNeighbor in ship.GetNeighborNodes(n.pos)) {
                     // if the neighbor is occupied, then we skip it
                     if(nNeighbor.occupied) {
-                        continue;
+                        skip = true;
+                        break;
                     }
+                }
+
+                if(skip) {
+                    continue;
                 }
 
                 // compute the distance from s to n
@@ -146,11 +137,6 @@ public class Bot4 : Bot {
             currentNode = prev[currentNode];
         }
         path.Reverse();
-
-        // highlight the path
-        foreach(Node v in path) {
-           v.Highlight();
-        }
 
         return path;
     }

@@ -16,7 +16,7 @@ public class Bot3 : Bot {
 
 
     public override string botName { get { return "Buffered Adaptive Path (Bot 3)";} }
-    public override void computeNextStep(ShipManager ship) {
+    public override void computeNextStep(ShipManager ship, bool front = true) {
         // store the ship for future use
         if(this.ship == null) {
             this.ship = ship;
@@ -77,11 +77,18 @@ public class Bot3 : Bot {
             foreach(Node n in neighbors) {
                 // for each neighbor of the current node's neighbors, we check if it is occupied
                 if(useBuffer) {
+                    bool skip = false;
+                    // for each neighbor of the current node's neighbors, we check if it is occupied
                     foreach(Node nNeighbor in ship.GetNeighborNodes(n.pos)) {
-                        // if the neighbor is occupied, we skip it
+                        // if the neighbor is occupied, then we skip it
                         if(nNeighbor.occupied) {
-                            continue;
+                            skip = true;
+                            break;
                         }
+                    }
+
+                    if(skip) {
+                        continue;
                     }
                 }
                 
