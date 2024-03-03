@@ -5,8 +5,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-    using Unity.Burst.CompilerServices;
-    using Unity.Mathematics;
+using Unity.Burst.CompilerServices;
+using Unity.Mathematics;
+using UnityEngine;
 
 // Generates a ship independent of any UnityEngine classes, so it can be used in a parallel context
 public class ParallelShipGenerator {
@@ -140,8 +141,11 @@ public class ParallelShipGenerator {
         // make pairs with roulette selection
         List<(Simulation, Simulation)> pairs = new List<(Simulation, Simulation)>();
         for (int i = 0; i < numShips - 3; i++) {
-            Simulation parent1 = topShips[RouletteSelection(probabilities)];
-            Simulation parent2 = topShips[RouletteSelection(probabilities)];
+            int firstSelect = RouletteSelection(probabilities);
+            int secondSelect = RouletteSelection(probabilities);
+
+            Simulation parent1 = topShips[firstSelect];
+            Simulation parent2 = topShips[secondSelect];
             pairs.Add((parent1, parent2));
         }
 
@@ -153,7 +157,7 @@ public class ParallelShipGenerator {
         return ships;
     }
 
-    public static float MUTATE_PROBABILITY = 0.1f;
+    public static float MUTATE_PROBABILITY = 0.05f;
     // performs uniform crossover on two ships
     private static bool[,] Crossover(Simulation sim1, Simulation sim2) {
         bool[,] ship1 = sim1.booleanShip;
@@ -167,7 +171,7 @@ public class ParallelShipGenerator {
         bool[,] child = new bool[dim, dim];
         for (int x = 0; x < dim; x++) {
             for (int y = 0; y < dim; y++) {
-                if (ship1[x, y] == ship2[x, y] && ThreadSafeRandom.NextFloat() < (1-MUTATE_PROBABILITY)) {
+                if (ship1[x, y] == ship2[x, y] && ThreadSafeRandom.NextFloat() > MUTATE_PROBABILITY){
                     child[x, y] = ship1[x, y];
                 } else {
                     child[x, y] = ThreadSafeRandom.NextFloat() < p ? ship1[x, y] : !ship1[x,y];
