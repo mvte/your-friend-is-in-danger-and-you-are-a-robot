@@ -135,7 +135,7 @@ public class ParallelShipGenerator {
         // make probability map for roulette selection
         List<float> probabilities = new List<float>();
         foreach (var ship in topShips) {
-            probabilities.Add(1/topShips.Count);
+            probabilities.Add(ship.successes / (float)(ship.successes + ship.failures));
         }
 
         // make pairs with roulette selection
@@ -163,18 +163,22 @@ public class ParallelShipGenerator {
         bool[,] ship1 = sim1.booleanShip;
         bool[,] ship2 = sim2.booleanShip;
         int dim = ship1.GetLength(0);
-        // probability of a node being the same as the first node (uniform chance)
-        float p = 0.5f;
+        // probability of a node being opened in the child (bias for open)
+        float p = 0.6f;
 
         // if both nodes are the same, the child node is the same. 
-        // otherwise, the child node is the same as the first node with probability p
+        // otherwise, the child node is opened with probability p
         bool[,] child = new bool[dim, dim];
         for (int x = 0; x < dim; x++) {
             for (int y = 0; y < dim; y++) {
-                if (ship1[x, y] == ship2[x, y] && ThreadSafeRandom.NextFloat() > MUTATE_PROBABILITY){
-                    child[x, y] = ship1[x, y];
+                if (ship1[x, y] == ship2[x, y]){
+                    if(ThreadSafeRandom.NextFloat() < MUTATE_PROBABILITY) {
+                        child[x, y] = !ship1[x, y];
+                    } else {
+                        child[x, y] = ship1[x, y];
+                    }
                 } else {
-                    child[x, y] = ThreadSafeRandom.NextFloat() < p ? ship1[x, y] : !ship1[x,y];
+                    child[x, y] = ThreadSafeRandom.NextFloat() < p;
                 }
             }
         }
