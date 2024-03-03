@@ -6032,7 +6032,7 @@ GameObject:
   - component: {fileID: 1570655480}
   - component: {fileID: 1570655481}
   m_Layer: 5
-  m_Name: Container
+  m_Name: BotSimMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6531,7 +6531,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Run Until Failure (<3% success)
+  m_text: Run Until Failure
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d5f79706b1362c140a38388e72cd5757, type: 2}
   m_sharedMaterial: {fileID: 6679817619540942942, guid: d5f79706b1362c140a38388e72cd5757, type: 2}
