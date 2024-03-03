@@ -132,12 +132,8 @@ public class ParallelShipGenerator {
         
         // make probability map for roulette selection
         List<float> probabilities = new List<float>();
-        float total = 0;
         foreach (var ship in topShips) {
-            total += ship.successes;
-        }
-        foreach (var ship in topShips) {
-            probabilities.Add(ship.successes / total);
+            probabilities.Add(1/topShips.Count);
         }
 
         // make pairs with roulette selection
@@ -161,8 +157,8 @@ public class ParallelShipGenerator {
         bool[,] ship1 = sim1.booleanShip;
         bool[,] ship2 = sim2.booleanShip;
         int dim = ship1.GetLength(0);
-        // we calculate p by the ratio of successes
-        float p = sim1.successes == sim2.successes ? 0.5f : sim1.successes / (sim1.successes + sim2.successes);
+        // probability of a node being the same as the first node (uniform chance)
+        float p = 0.5f;
 
         // if both nodes are the same, the child node is the same. 
         // otherwise, the child node is the same as the first node with probability p
