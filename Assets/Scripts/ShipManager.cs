@@ -64,9 +64,6 @@ public class ShipManager : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        Destroy(GameObject.Find("Fleet"));
-        Destroy(GameObject.Find("Bot"));
-        Destroy(GameObject.Find("Captain(Clone)"));
         nodes = null;
         aliens = null;
         captain = null;
@@ -74,7 +71,7 @@ public class ShipManager : MonoBehaviour
     }
 
     // creates the grid of nodes
-    void CreateGrid() {
+    protected void CreateGrid() {
         nodes = new Dictionary<Vector2, Node>();
 
         // generate the grid of nodes
@@ -156,7 +153,7 @@ public class ShipManager : MonoBehaviour
     /**
     * Places the captain in a random open node
     */
-    void PlaceCaptain() {
+    protected void PlaceCaptain() {
         List<Vector2> openNodes = new List<Vector2>();
         foreach (KeyValuePair<Vector2, Node> entry in nodes) {
             if (entry.Value.open) {
@@ -166,14 +163,16 @@ public class ShipManager : MonoBehaviour
 
         Vector2 chosen = openNodes[Mathf.RoundToInt(Random.Range(0, openNodes.Count))];
         captain = Instantiate(this.captainRef, new Vector3(chosen.x, chosen.y, 0), Quaternion.identity);
+        captain.transform.parent = this.transform;
         captain.pos = chosen;
     }
 
     /**
     * Boards k aliens in random open nodes
     */
-    void BoardAliens() {
+    protected void BoardAliens() {
         GameObject fleet = new GameObject("Fleet");
+        fleet.transform.parent = this.transform;
         aliens = new List<Alien>();
 
         List<Vector2> openNodes = new List<Vector2>();
@@ -202,7 +201,7 @@ public class ShipManager : MonoBehaviour
     /**
     * Places the bot in a random open node
     */
-    void PlaceBot() {
+    protected void PlaceBot() {
         List<Vector2> openNodes = new List<Vector2>();
         foreach (KeyValuePair<Vector2, Node> entry in nodes) {
             if (entry.Value.open && !entry.Value.occupied && captain.pos != entry.Key) {
@@ -212,6 +211,7 @@ public class ShipManager : MonoBehaviour
 
         Vector2 chosen = openNodes[Mathf.RoundToInt(Random.Range(0, openNodes.Count))];
         bot = Instantiate(botRef, new Vector3(chosen.x, chosen.y, 0), Quaternion.identity);
+        bot.transform.parent = this.transform;
         bot.pos = chosen;
         bot.name = "Bot";
     }
