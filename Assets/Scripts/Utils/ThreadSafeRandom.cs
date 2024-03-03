@@ -33,5 +33,7 @@ namespace Utils {
         public static int Next() => Instance.Next();
 
         public static int Next(int maxValue) => Instance.Next(maxValue);
+
+        public static float NextFloat() => (float)Instance.NextDouble();
     }
 }
