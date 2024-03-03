@@ -24,7 +24,7 @@ public class GeneticManager : MonoBehaviour {
     // config variables
     [SerializeField]
     int Generation = 0;
-    int MaxGenerations = 100;
+    int MaxGenerations = 50;
     int ShipCount = 50;
     int SimCount = 25;
     int Dim = 32;
