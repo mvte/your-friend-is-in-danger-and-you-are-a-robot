@@ -122,7 +122,7 @@ public class GeneticManager : MonoBehaviour {
         genDataWriter.Write(Generation, successes, failures);
 
         // sort simulations by success
-        Array.Sort(Simulations, (a, b) => a.successes.CompareTo(b.successes));
+        Array.Sort(Simulations, (a, b) => b.successes.CompareTo(a.successes));
 
         // store top 20% of ships to create next generation
         List<Simulation> topShips = new List<Simulation>();
