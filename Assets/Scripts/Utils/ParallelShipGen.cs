@@ -164,7 +164,7 @@ public class ParallelShipGenerator {
         bool[,] ship2 = sim2.booleanShip;
         int dim = ship1.GetLength(0);
         // probability of a node being opened in the child (bias for open)
-        float p = 0.6f;
+        float p = 0.65f;
 
         // if both nodes are the same, the child node is the same. 
         // otherwise, the child node is opened with probability p
